@@ -1,54 +1,70 @@
 import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
 import MovieList from './MovieList';
 import Filter from './Filter';
 import AddMovieForm from './AddMovieForm';
+import MovieDescription from './MovieDescription';
+
 function App() {
-  const [movies, setMovies] = useState([
-    {
-      title: 'The Shawshank Redemption',
-      description: 'Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.',
-      posterURL: 'https://fr.web.img3.acsta.net/medias/nmedia/18/63/30/68/18686447.jpg',
-      rating: 9.3,
-    },
-    {
-      title: 'The Godfather',
-      description: 'The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.',
-      posterURL: 'data:image/jpeg;base64,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',
-      rating: 9.2,
-    },
-    // Add more movies here
-  ]);
+const [movies, setMovies] = useState([
+{
+title: 'The Shawshank Redemption',
+description:
+'Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.',
+posterURL:
+'https://fr.web.img3.acsta.net/medias/nmedia/18/63/30/68/18686447.jpg',
+rating: 9.3,
+trailerLink: 'https://www.youtube.com/watch?v=6hB3S9bIaco',
+},
+{
+title: 'The Godfather',
+description:
+'The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.',
+posterURL: 'data:image/jpeg',
+rating: 9.2,
+trailerLink: 'https://www.youtube.com/watch?v=sY1S34973zA',
+},
+// Add more movies here
+]);
 
-  const [titleFilter, setTitleFilter] = useState('');
-  const [ratingFilter, setRatingFilter] = useState('');
+const [titleFilter, setTitleFilter] = useState('');
+const [ratingFilter, setRatingFilter] = useState('');
 
-  function handleAddMovie(movie) {
-    setMovies([...movies, movie]);
-  }
+function handleAddMovie(movie) {
+setMovies([...movies, movie]);
+}
 
-  function handleTitleFilterChange(value) {
-    setTitleFilter(value);
-  }
+function handleTitleFilterChange(value) {
+setTitleFilter(value);
+}
 
-  function handleRatingFilterChange(value) {
-    setRatingFilter(value);
-  }
+function handleRatingFilterChange(value) {
+setRatingFilter(value);
+}
 
-  const filteredMovies = movies.filter(movie =>
-    movie.title.toLowerCase().includes(titleFilter.toLowerCase()) &&
-    movie.rating.toString().includes(ratingFilter)
-  );
+const filteredMovies = movies.filter(
+(movie) =>
+movie.title.toLowerCase().includes(titleFilter.toLowerCase()) &&
+movie.rating.toString().includes(ratingFilter)
+);
 
-  return (
-    <div className="app">
-      <Filter
-        onTitleFilterChange={handleTitleFilterChange}
-        onRatingFilterChange={handleRatingFilterChange}
-      />
-      <MovieList movies={filteredMovies} />
-      <AddMovieForm onAddMovie={handleAddMovie} />
-    </div>
-  );
+return (
+
+      <div className="app">
+        <Route exact path="/">
+          <Filter
+            onTitleFilterChange={handleTitleFilterChange}
+            onRatingFilterChange={handleRatingFilterChange}
+          />
+          <MovieList movies={filteredMovies} />
+          <AddMovieForm onAddMovie={handleAddMovie} />
+        </Route>
+        <Route path="/movies/:title">
+          <MovieDescription movies={movies} />
+        </Route>
+      </div>
+    
+);
 }
 
 export default App;
